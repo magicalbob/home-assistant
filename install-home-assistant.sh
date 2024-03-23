@@ -47,24 +47,20 @@ then
     kubectl create namespace "${PRODUCT_NAME}"
 fi
 
-#echo "create prometheus-operator Custom Resource Definitions"
-#kubectl apply -f "https://github.com/prometheus-operator/prometheus-operator/releases/download/v0.72.0/stripped-down-crds.yaml"
-#
-### sort out persistent volume
-##if [ "X${USE_KIND}" == "XX" ]; then
-##  export NODE_NAME=$(kubectl get nodes |grep control-plane|cut -d\  -f1|head -1)
-##  envsubst < jellyfin.pv.kind.template > jellyfin.pv.yml
-##else
-##  export NODE_NAME=$(kubectl get nodes | grep -v ^NAME|grep -v control-plane|cut -d\  -f1|head -1)
-##  envsubst < jellyfin.pv.linux.template > jellyfin.pv.yml
-##  echo mkdir -p ${PWD}/jellyfin-media|ssh -o StrictHostKeyChecking=no ${NODE_NAME}
-##  echo mkdir -p ${PWD}/jellyfin-config|ssh -o StrictHostKeyChecking=no ${NODE_NAME}
-##fi
-##kubectl apply -f jellyfin.pv.yml
-#
-#echo create deployment
-#kubectl apply -f ${PRODUCT_NAME}.deployment.yaml
-#
+# sort out persistent volume
+if [ "X${USE_KIND}" == "XX" ]; then
+  export NODE_NAME=$(kubectl get nodes |grep control-plane|cut -d\  -f1|head -1)
+  envsubst < ${PRODUCT_NAME}.pv.kind.template > ${PRODUCT_NAME}.pv.yml
+else
+  export NODE_NAME=$(kubectl get nodes | grep -v ^NAME|grep -v control-plane|cut -d\  -f1|head -1)
+  envsubst < ${PRODUCT_NAME}.pv.linux.template > ${PRODUCT_NAME}.pv.yml
+  echo mkdir -p ${PWD}/${PRODUCT_NAME}-config|ssh -o StrictHostKeyChecking=no ${NODE_NAME}
+fi
+kubectl apply -f ${PRODUCT_NAME}.pv.yml
+
+echo create deployment
+kubectl apply -f ${PRODUCT_NAME}.deployment.yaml
+
 ##echo create service
 ##kubectl apply -f jellyfin.service.yaml
 ##
