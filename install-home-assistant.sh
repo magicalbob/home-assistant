@@ -64,15 +64,15 @@ kubectl apply -f ${PRODUCT_NAME}.deployment.yaml
 echo create service
 kubectl apply -f home-assistant.service.yaml
 
-##echo wait for deployment to be running
-##until kubectl get all -n jellyfin|grep ^pod/|grep 1/1; do
-##  sleep 5
-##done
-##
-##echo create port-forward to access jellyfin on port 8096
-##if ! nc -z -w1 0.0.0.0 8096; then
-##  # Port 4566 is not already forwarded, so execute the port-forwarding command
-##  kubectl port-forward service/jellyfin-service -n jellyfin --address 0.0.0.0 8096:8096 &
-##else
-##  echo "Port 8096 is already forwarded."
-##fi
+echo wait for deployment to be running
+until kubectl get all -n ${PRODUCT_NAME}|grep ^pod/|grep 1/1; do
+  sleep 5
+done
+
+echo create port-forward to access ${PRODUCT_NAME} on port 8123
+if ! nc -z -w1 0.0.0.0 8123; then
+  # Port 8123 is not already forwarded, so execute the port-forwarding command
+  kubectl port-forward service/${PRODUCT_NAME}-service -n ${PRODUCT_NAME} --address 0.0.0.0 8123:8123 &
+else
+  echo "Port 8123 is already forwarded."
+fi
