@@ -61,9 +61,9 @@ kubectl apply -f ${PRODUCT_NAME}.pv.yml
 echo create deployment
 kubectl apply -f ${PRODUCT_NAME}.deployment.yaml
 
-##echo create service
-##kubectl apply -f jellyfin.service.yaml
-##
+echo create service
+kubectl apply -f home-assistant.service.yaml
+
 ##echo wait for deployment to be running
 ##until kubectl get all -n jellyfin|grep ^pod/|grep 1/1; do
 ##  sleep 5
